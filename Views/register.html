@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Survey</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            width: 350px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-step {
+            display: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .form-step.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .form-step input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-step button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff7f50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-step button:hover {
+            background-color: #ff6347;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div class="form-container">
+        <div class="form-step active">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            <button onclick="nextStep()">Next</button>
+        </div>
+        <div class="form-step">
+            <label for="username">Create Username:</label>
+            <input type="text" id="username" required>
+            <button onclick="nextStep()">Next</button>
+        </div>
+        <div class="form-step">
+            <label for="password">Create Password:</label>
+            <input type="password" id="password" required>
+            <button onclick="handleSubmit()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.form-step');
+
+        function nextStep() {
+            steps[currentStep].classList.remove('active');
+            currentStep++;
+            if (currentStep < steps.length) {
+                steps[currentStep].classList.add('active');
+            }
+        }
+
+        const supabaseUrl = 'https://snkbvpwwmgxtwxermzvn.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNua2J2cHd3bWd4dHd4ZXJtenZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYwMTE3MjIsImV4cCI6MjA0MTU4NzcyMn0.oGF4gHSR_UigclQ8pseJhZ3A8f0QHF4QfuWcei8un2c';
+
+        // Create the Supabase client correctly
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        async function submitForm() {
+            const name = document.getElementById('name').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Generate a UUID
+            const uuid = crypto.randomUUID();
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .insert([
+                        {
+                            uuid: uuid,
+                            name: name,
+                            username: username,
+                            password: password
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                console.log('User registered successfully');
+                window.location.href = 'manageprofile.html';
+            } catch (error) {
+                console.error('Error registering user:', error.message);
+            }
+        }
+
+        function handleSubmit() {
+            submitForm().catch(error => {
+                console.error('Error in submitForm:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>
