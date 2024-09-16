@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,8 +84,84 @@
     .text-color {
         color: black;
     }
-</style>
 
+    /* Pricing Section Styles */
+    .pricing-section {
+        padding: 60px 20px;
+        background-color: #f9f9f9;
+    }
+
+    .pricing-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .pricing-options {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .pricing-card {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        width: 300px;
+        padding: 40px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .pricing-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: #ee440cc2;
+        /* Highlight color for plan title */
+    }
+
+    .pricing-card .price {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .pricing-card ul {
+        list-style-type: none;
+        padding: 0;
+        text-align: left;
+        color: #666;
+    }
+
+    .pricing-card ul li {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .pricing-card ul li:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-card button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        border: none;
+        background-color: #ee440cc2;
+        color: white;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .pricing-card button:hover {
+        background-color: #d93a79;
+    }
+</style>
 
 <body>
     <nav class="navbar">
@@ -100,3 +175,78 @@
             <a href="#" class="start-free text-color">Download</a>
         </div>
     </nav>
+
+    <section class="pricing-section">
+        <h2>API Pricing</h2>
+        <div class="pricing-options">
+            <!-- Pro Plan -->
+            <div class="pricing-card">
+                <h3>Solo</h3>
+                <div class="price">$0.21<span>/request*</span></div>
+                <ul>
+                    <li>10 free requests (per month)</li>
+                    <li>Support for repos up to 10GB</li>
+                    <li>SAST for security and dependency analysis</li>
+                    <li>White glove customer support (24/7)</li>
+                </ul>
+                <button id="checkout-button-pro">Start Solo Plan</button>
+            </div>
+
+            <!-- Business Plan -->
+            <div class="pricing-card">
+                <h3>Partnership</h3>
+                <div class="price">$0.45<span>/request*</span></div>
+                <ul>
+                    <li>All Solo Plan features</li>
+                    <li>AICPA, OWASP & SOC2 compliance</li>
+                    <li>Process projects over 10GB</li>
+                    <li>Early access to new features</li>
+                </ul>
+                <button>Start Business Plan</button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card">
+                <h3>Enterprise</h3>
+                <div class="price">Custom Pricing</div>
+                <ul>
+                    <li>Azure Devops, Github, and Jira integrations</li>
+                    <li>Custom security protocols</li>
+                    <li>Personal Strive Service Agent</li>
+                    <li></li>
+                </ul>
+                <button>Schedule Enterprise Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        // Initialize Stripe.js with your public key
+        var stripe = Stripe('pk_live_51Pxtc9P568PzVegzbGByam2cjD4Cp39hgKzQUOdRhXIK4Go98bnQCFZLH5LWC3F8u8tKB2fGM0N95L43Os96Fyit00Feqhftc6');
+
+        var checkoutButton = document.getElementById('checkout-button-pro');
+
+        checkoutButton.addEventListener('click', function () {
+            fetch('/create-checkout-session', {
+                method: 'POST',
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (session) {
+                    return stripe.redirectToCheckout({ sessionId: session.id });
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
